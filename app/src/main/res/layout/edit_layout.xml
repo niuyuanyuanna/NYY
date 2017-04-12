@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
+    
+    <EditText
+        android:id="@+id/dropview_edit"
+        android:layout_width="0dp"
+        android:layout_weight="0.84"
+        android:layout_height="@dimen/setting_btn_height"
+        android:textSize="@dimen/setting_btn_txtSize"
+        android:height="38dp"
+        android:textColor="@color/white"
+        android:textColorHint="@color/setting_btn_txtColor"/>
+    
+    <ImageView
+        android:id="@+id/dropview_image"
+        android:layout_width="@dimen/setting_btn_height"
+        android:layout_height="@dimen/setting_btn_height"
+        android:layout_gravity="center_vertical"
+        android:scaleType="centerInside" />
+
+</LinearLayout>

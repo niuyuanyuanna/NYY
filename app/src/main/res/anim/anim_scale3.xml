@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<set xmlns:android="http://schemas.android.com/apk/res/android"
+    android:interpolator="@android:anim/cycle_interpolator"
+    android:shareInterpolator="true" >
+    <alpha
+        android:duration="4000"
+        android:fromAlpha="1.0"
+        android:toAlpha="0.5"
+        android:repeatCount="-1"
+        android:repeatMode="reverse" />
+    <rotate
+        android:duration="12000"
+        android:fromDegrees="360"
+        android:repeatCount="-1"
+        android:toDegrees="0"
+        android:pivotX="50%"
+        android:pivotY="50%"
+        android:repeatMode="restart"/>
+
+</set>
+
+    <!--fromXScale/fromYScale：沿着X轴/Y轴缩放的起始比例-->
+    <!--toXScale/toYScale：沿着X轴/Y轴缩放的结束比例-->
+    <!--pivotX/pivotY：缩放的中轴点X/Y坐标，即距离自身左边缘的位置，比如50%就是以图像的 中心为中轴点-->

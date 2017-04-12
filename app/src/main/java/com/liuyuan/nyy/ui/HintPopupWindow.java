@@ -1,0 +1,40 @@
+package com.liuyuan.nyy.ui;
+
+import android.content.Context;
+import android.text.TextUtils;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup.LayoutParams;
+import android.widget.PopupWindow;
+import android.widget.TextView;
+
+import com.liuyuan.nyy.R;
+
+/**
+ * 提示框
+ * 
+ * @author iFlytek &nbsp;&nbsp;&nbsp;<a href="http://www.xfyun.cn/">讯飞语音云</a>
+ */
+public class HintPopupWindow extends PopupWindow{
+	private TextView mHintTextView;
+	private String mHintText;
+
+	public HintPopupWindow(Context context) {
+		super(context);
+		
+		View contentView = LayoutInflater.from(context).inflate(R.layout.popup_window_content, null);
+		mHintTextView = (TextView) contentView.findViewById(R.id.txt_popup_hint);
+		setContentView(contentView);
+		setWidth(LayoutParams.WRAP_CONTENT);
+		setHeight(LayoutParams.WRAP_CONTENT);
+		setBackgroundDrawable(null);
+	}
+	
+	public void setHint(String hint) {
+
+			mHintTextView.setText(hint);
+			mHintText = hint;
+
+	}
+	
+}

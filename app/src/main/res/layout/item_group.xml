@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/list_item_group"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/setting_title_background"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/group_item_content"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/setting_btn_height"
+        android:layout_marginStart="10dp"
+        android:gravity="start|center_vertical"
+        android:textColor="@color/white"
+        android:background="@color/transparent"
+        android:textSize="@dimen/regist_username_txtsize" >
+    </TextView>
+
+</LinearLayout>

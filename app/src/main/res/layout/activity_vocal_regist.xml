@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_vocal_regist"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background1"
+    tools:context="com.liuyuan.nyy.regist.VocalRegist">
+    <!--  标题栏 -->
+    <RelativeLayout
+        android:id="@+id/vocal_rllyt_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/setting_title_background">
+
+        <TextView
+            android:id="@+id/textView1"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/title_height"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/margin"
+            android:gravity="center"
+            android:text="声纹注册"
+            android:textColor="@color/white"
+            android:textSize="@dimen/title_text_size" />
+    </RelativeLayout>
+    <!--用户名-->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_below="@+id/vocal_rllyt_title"
+        android:id="@+id/user_inform">
+
+        <TextView
+            android:id="@+id/vocal_txt_uname"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:textSize="@dimen/regist_username_txtsize"
+            android:layout_marginStart="14dp"
+            android:layout_toEndOf="@+id/vocal_txt_tag_uname" />
+
+        <ImageView
+            android:id="@+id/vocal_txt_tag_uname"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:background="@color/transparent"
+            android:src="@drawable/ic_user" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="400dp"
+        android:id="@+id/text_number"
+        android:layout_below="@+id/user_inform"
+        android:background="@drawable/image1">
+
+        <TextView
+            android:id="@+id/vocal_edt_result"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:gravity="center"
+            android:maxLines="4"
+            android:minLines="4"
+            android:textColor="@color/setting_btn_txtColor"
+            android:textSize="22sp" />
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:background="@drawable/bottom"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true">
+
+        <FrameLayout
+            android:id="@+id/fllyt_vol"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:contextClickable="false"
+            android:orientation="horizontal">
+            <ImageButton
+                android:id="@+id/btnVocalPressToSpeak"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_horizontal"
+                android:background="@color/transparent"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_mic_round" />
+        </FrameLayout>
+
+
+        <ImageButton
+            android:id="@+id/btnVocalQuiry"
+            android:layout_width="@dimen/title_button_size"
+            android:layout_height="@dimen/title_button_size"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="@dimen/title_button_margin"
+            android:background="@color/transparent"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_search" />
+
+        <ImageButton
+            android:id="@+id/btnVocalDelet"
+            android:layout_width="@dimen/title_button_size"
+            android:layout_height="@dimen/title_button_size"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:background="@color/transparent"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_delete"
+            android:layout_marginEnd="@dimen/title_button_margin"/>
+
+    </RelativeLayout>
+
+</RelativeLayout>

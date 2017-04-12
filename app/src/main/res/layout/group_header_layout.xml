@@ -1,0 +1,235 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/group_manager_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!--  标题栏 -->
+    <RelativeLayout
+        android:id="@+id/vocal_rllyt_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/setting_title_background">
+
+        <TextView
+            android:id="@+id/textView1"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/title_height"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/margin"
+            android:gravity="center"
+            android:text="部门管理"
+            android:textColor="@color/white"
+            android:textSize="@dimen/title_text_size" />
+    </RelativeLayout>
+    <!--用户名-->
+    <RelativeLayout
+        android:id="@+id/user_inform"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/vocal_rllyt_title"
+        android:gravity="center">
+
+        <TextView
+            android:id="@+id/txt_username"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="14dp"
+            android:layout_toEndOf="@+id/vocal_txt_tag_uname"
+            android:textColor="@color/white"
+            android:textSize="@dimen/regist_username_txtsize" />
+
+        <ImageView
+            android:id="@+id/vocal_txt_tag_uname"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:background="@color/transparent"
+            android:src="@drawable/ic_user" />
+    </RelativeLayout>
+
+    <View
+        android:id="@+id/view1"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/setting_btn_height"
+        android:layout_below="@+id/user_inform" />
+
+    <LinearLayout
+        android:id="@+id/group_create_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/view1"
+        android:background="@color/setting_title_background"
+        android:orientation="vertical">
+
+        <View
+            android:id="@+id/line"
+            android:layout_width="match_parent"
+            android:layout_height="1dip"
+            android:background="@color/white" />
+
+        <EditText
+            android:id="@+id/edt_group_name"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/setting_btn_height"
+            android:layout_marginStart="5dp"
+            android:ems="20"
+            android:hint="输入部门名称"
+            android:inputType="text"
+            android:maxLines="1"
+            android:textColorHint="@color/setting_btn_txtColor"
+            android:textSize="@dimen/regist_username_txtsize" />
+
+        <View
+            android:id="@+id/line1"
+            android:layout_width="match_parent"
+            android:layout_height="1dip"
+            android:layout_marginStart="@dimen/regist_margin_start"
+            android:background="@color/white" />
+
+        <Button
+            android:id="@+id/btn_group_create"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/setting_btn_height"
+            android:layout_marginStart="@dimen/regist_margin_start"
+            android:background="@color/transparent"
+            android:gravity="start|center_vertical"
+            android:text="创建"
+            android:textColor="@color/white"
+            android:textSize="@dimen/regist_username_txtsize" />
+
+        <View
+            android:id="@+id/line2"
+            android:layout_width="match_parent"
+            android:layout_height="1dip"
+            android:background="@color/white" />
+    </LinearLayout>
+
+    <View
+        android:id="@+id/view2"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/setting_btn_height"
+        android:layout_below="@+id/group_create_layout" />
+
+    <LinearLayout
+        android:id="@+id/group_add_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/view2"
+        android:background="@color/setting_title_background"
+        android:orientation="vertical">
+
+        <View
+            android:id="@+id/line3"
+            android:layout_width="match_parent"
+            android:layout_height="1dip"
+            android:background="@color/white" />
+
+        <EditText
+            android:id="@+id/edt_group_id"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/setting_btn_height"
+            android:layout_marginStart="5dp"
+            android:digits="0123456789abcdefghijklmnopqrstuvwxyzABCEDFGHIJKLMNOPQRSTUVWXYZ_"
+            android:ems="20"
+            android:gravity="center_vertical"
+            android:hint="输入部门Id"
+            android:inputType="text"
+            android:maxLines="1"
+            android:textColor="@color/white"
+            android:textColorHint="@color/setting_btn_txtColor"
+            android:textSize="@dimen/regist_username_txtsize" />
+        <View
+            android:id="@+id/line4"
+            android:layout_width="match_parent"
+            android:layout_height="1dip"
+            android:layout_marginStart="@dimen/regist_margin_start"
+            android:background="@color/white" />
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/setting_btn_height"
+            android:id="@+id/btn_group_join"
+            android:gravity="start|center_vertical"
+            android:background="@color/transparent"
+            android:layout_marginStart="@dimen/regist_margin_start"
+            android:textColor="@color/white"
+            android:textSize="@dimen/regist_username_txtsize"
+            android:text="加入部门"/>
+        <View
+            android:id="@+id/line5"
+            android:layout_width="match_parent"
+            android:layout_height="1dip"
+            android:layout_marginStart="@dimen/regist_margin_start"
+            android:background="@color/white" />
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/setting_btn_height"
+            android:id="@+id/btn_person_delete"
+            android:gravity="start|center_vertical"
+            android:background="@color/transparent"
+            android:layout_marginStart="@dimen/regist_margin_start"
+            android:textColor="@color/white"
+            android:textSize="@dimen/regist_username_txtsize"
+            android:text="退出部门"/>
+        <View
+            android:id="@+id/line6"
+            android:layout_width="match_parent"
+            android:layout_height="1dip"
+            android:layout_marginStart="@dimen/regist_margin_start"
+            android:background="@color/white" />
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/setting_btn_height"
+            android:id="@+id/btn_group_delete"
+            android:gravity="start|center_vertical"
+            android:background="@color/transparent"
+            android:layout_marginStart="@dimen/regist_margin_start"
+            android:textColor="@color/white"
+            android:textSize="@dimen/regist_username_txtsize"
+            android:text="删除部门"/>
+        <View
+            android:id="@+id/line7"
+            android:layout_width="match_parent"
+            android:layout_height="1dip"
+            android:background="@color/white" />
+    </LinearLayout>
+
+    <View
+        android:id="@+id/view3"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/setting_btn_height"
+        android:layout_below="@+id/group_add_layout" />
+
+    <LinearLayout
+        android:id="@+id/group_mygroup_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/setting_title_background"
+        android:layout_below="@id/view3"
+        android:orientation="vertical">
+
+        <View
+            android:id="@+id/line8"
+            android:layout_width="match_parent"
+            android:layout_height="1dip"
+            android:background="@color/white" />
+
+        <TextView
+            android:id="@+id/txt_group_mygroup"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/setting_btn_height"
+            android:layout_marginStart="@dimen/regist_margin_start"
+            android:text="已加入的部门"
+            android:gravity="start|center_vertical"
+            android:textColor="@color/setting_btn_txtColor"
+            android:textSize="@dimen/regist_username_txtsize" />
+        <View
+            android:id="@+id/line9"
+            android:layout_width="match_parent"
+            android:layout_height="1dip"
+            android:layout_marginStart="@dimen/regist_margin_start"
+            android:background="@color/white" />
+    </LinearLayout>
+</RelativeLayout>
