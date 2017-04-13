@@ -11,7 +11,7 @@ public class SpeechApp extends Application {
     public static String mAuth_id;
     private static String mPassword = "1234";
     public static int failTime = 0;
-    private static String group_id = "1951577892"; //laboratory   1949205589
+    private static String group_id = "2274011312"; //laboratory   2272027878
     private static String group_name = "laboratory";//            dormitory
 
     private static User mUser;
