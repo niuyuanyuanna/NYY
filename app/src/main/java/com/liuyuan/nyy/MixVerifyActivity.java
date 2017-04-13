@@ -50,7 +50,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -82,8 +81,8 @@ public class MixVerifyActivity extends AppCompatActivity
     private TextView mPwdTextView;
     private TextView tvGroupId;
     private ImageButton mFlashSwitchButton;
-    private ImageButton mChangeCameraButton;
-    private ImageButton mInputPwdButton;
+//    private ImageButton mChangeCameraButton;
+//    private ImageButton mInputPwdButton;
     private ImageView mBtnRecord;
     private ProgressDialog mProDialog;
     private RecordView mVolView;
@@ -165,8 +164,8 @@ public class MixVerifyActivity extends AppCompatActivity
         tvGroupId = (TextView) findViewById(R.id.tv_group_name);
         mPwdTextView = (TextView) findViewById(R.id.txt_num);
         mFlashSwitchButton = (ImageButton) findViewById(R.id.btn_flash_switch);
-        mChangeCameraButton = (ImageButton) findViewById(R.id.btn_change_camera);
-        mInputPwdButton = (ImageButton) findViewById(R.id.btn_input_password);
+//        mChangeCameraButton = (ImageButton) findViewById(R.id.btn_change_camera);
+//        mInputPwdButton = (ImageButton) findViewById(R.id.btn_input_password);
         mBtnRecord = (ImageView) findViewById(R.id.btn_record);
 
         //设置组ID
@@ -186,9 +185,9 @@ public class MixVerifyActivity extends AppCompatActivity
             }
         });
 
-        mChangeCameraButton.setOnClickListener(this);
+        findViewById(R.id.btn_change_camera).setOnClickListener(this);
+        findViewById(R.id.btn_input_password).setOnClickListener(this);
         mFlashSwitchButton.setOnClickListener(this);
-        mInputPwdButton.setOnClickListener(this);
         mToast = Toast.makeText(MixVerifyActivity.this, "", Toast.LENGTH_SHORT);
 
         mVolView = new RecordView(MixVerifyActivity.this);
