@@ -55,12 +55,13 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class MixVerifyActivity extends AppCompatActivity
+public class MixVerifyActivity1 extends AppCompatActivity
         implements View.OnClickListener, SurfaceHolder.Callback {
     private static final String TAG = MixVerifyActivity.class.getSimpleName();
 
-    //是否登陆成功
+    //声纹验证是否通过
     private boolean mLoginSuccess_v = false;
+    private String vocalResult;
 
     private String name_f;
     private String name_v;
@@ -81,12 +82,12 @@ public class MixVerifyActivity extends AppCompatActivity
     private TextView mPwdTextView;
     private TextView tvGroupId;
     private ImageButton mFlashSwitchButton;
-//    private ImageButton mChangeCameraButton;
-//    private ImageButton mInputPwdButton;
+    private ImageButton mChangeCameraButton;
+    private ImageButton mInputPwdButton;
     private ImageView mBtnRecord;
     private ProgressDialog mProDialog;
     private RecordView mVolView;
-    private boolean mRecordButtonPressed;
+    //    private boolean mRecordButtonPressed;
     //提示框显示位置的纵坐标
     private int mHintOffsetY;
 
@@ -115,6 +116,8 @@ public class MixVerifyActivity extends AppCompatActivity
     private boolean mWriteAudio = false;
 
     private final int DELAY_TIME = 1000;
+    // 在松开麦克风之前是否已经出现错误
+//    private boolean mErrorOccurBeforeUp = false;
 
     private static final int MSG_FACE_START = 1;
     private static final int MSG_TAKE_PICTURE = 2;
@@ -135,7 +138,7 @@ public class MixVerifyActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mix_verify);
 
-        mCameraHelper = CameraHelper.createHelper(MixVerifyActivity.this);
+        mCameraHelper = CameraHelper.createHelper(MixVerifyActivity1.this);
 
         initUi();
 
@@ -162,6 +165,8 @@ public class MixVerifyActivity extends AppCompatActivity
         tvGroupId = (TextView) findViewById(R.id.tv_group_name);
         mPwdTextView = (TextView) findViewById(R.id.txt_num);
         mFlashSwitchButton = (ImageButton) findViewById(R.id.btn_flash_switch);
+        mChangeCameraButton = (ImageButton) findViewById(R.id.btn_change_camera);
+        mInputPwdButton = (ImageButton) findViewById(R.id.btn_input_password);
         mBtnRecord = (ImageView) findViewById(R.id.btn_record);
 
         //设置组ID
@@ -181,12 +186,12 @@ public class MixVerifyActivity extends AppCompatActivity
             }
         });
 
-        findViewById(R.id.btn_change_camera).setOnClickListener(this);
-        findViewById(R.id.btn_input_password).setOnClickListener(this);
+        mChangeCameraButton.setOnClickListener(this);
         mFlashSwitchButton.setOnClickListener(this);
-        mToast = Toast.makeText(MixVerifyActivity.this, "", Toast.LENGTH_SHORT);
+        mInputPwdButton.setOnClickListener(this);
+        mToast = Toast.makeText(MixVerifyActivity1.this, "", Toast.LENGTH_SHORT);
 
-        mVolView = new RecordView(MixVerifyActivity.this);
+        mVolView = new RecordView(MixVerifyActivity1.this);
     }
 
     @Override
@@ -223,7 +228,7 @@ public class MixVerifyActivity extends AppCompatActivity
             case R.id.btn_change_camera:
                 int cameracount = Camera.getNumberOfCameras();
                 if (cameracount <= 1) {
-                    showTip(getString(R.string.hint_change_not_support));
+                    showTips(getString(R.string.hint_change_not_support));
                     return;
                 }
                 // 先关闭摄相头
@@ -236,7 +241,7 @@ public class MixVerifyActivity extends AppCompatActivity
                     if (CameraHelper.hasCamera(Camera.CameraInfo.CAMERA_FACING_BACK))
                         mCameraId = Camera.CameraInfo.CAMERA_FACING_BACK;
                 } else {
-                    showTip(getString(R.string.hint_change_not_support));
+                    showTips(getString(R.string.hint_change_not_support));
                     return;
                 }
 
@@ -246,7 +251,7 @@ public class MixVerifyActivity extends AppCompatActivity
                 // 检查当前硬件设施是否支持闪光灯
                 if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH)
                         || mCameraId == Camera.CameraInfo.CAMERA_FACING_FRONT) {
-                    showTip(getString(R.string.hint_flash_not_support));
+                    showTips(getString(R.string.hint_flash_not_support));
                     return;
                 }
                 Camera.Parameters param = mCamera.getParameters();
@@ -256,11 +261,11 @@ public class MixVerifyActivity extends AppCompatActivity
                 if (flasemode.equals(Camera.Parameters.FLASH_MODE_TORCH)) {
                     param.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
                     mFlashSwitchButton.setImageResource(R.drawable.ico_flash_off);
-                    showTip(getString(R.string.hint_flash_closed));
+                    showTips(getString(R.string.hint_flash_closed));
                 } else {
                     param.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
                     mFlashSwitchButton.setImageResource(R.drawable.ico_flash_on);
-                    showTip(getString(R.string.hint_flash_opened));
+                    showTips(getString(R.string.hint_flash_opened));
                 }
                 // 防止参数设置部分手机failed
                 try {
@@ -283,7 +288,7 @@ public class MixVerifyActivity extends AppCompatActivity
     }
 
     private void actionDown() {
-        mRecordButtonPressed = true;
+//        mRecordButtonPressed = true;
         // 按下事件
         if (!mVerifyStarted) {
             if (null != mCamera && !mIsPreviewing) {
@@ -304,15 +309,15 @@ public class MixVerifyActivity extends AppCompatActivity
             }
 
         } else {
-            showTip(getString(R.string.login_hint_verifying));
+            showTips(getString(R.string.login_hint_verifying));
         }
     }
 
     private void actionUp() {
-        mRecordButtonPressed = false;
+//        mRecordButtonPressed = false;
         // 停止录音，开始拍照，随后开始人脸验证
         stopRecording();
-        mHandler.sendEmptyMessageDelayed(MSG_TAKE_PICTURE,DELAY_TIME);
+        mHandler.sendEmptyMessageDelayed(MSG_TAKE_PICTURE, DELAY_TIME);
     }
 
     /**
@@ -357,8 +362,6 @@ public class MixVerifyActivity extends AppCompatActivity
         }
     };
 
-
-
     /**
      * 开始声纹验证，Touch事件监听器中case MotionEvent.ACTION_DOWN处理
      * 设置声纹鉴别对象参数
@@ -370,7 +373,7 @@ public class MixVerifyActivity extends AppCompatActivity
         mVerifyStarted = true;
         mLoginSuccess_v = false;
 
-        // 设置声纹验证参数
+        // 设置融合验证参数
         // 清空参数
         mIdVerifier.setParameter(SpeechConstant.PARAMS, null);
         // 设置会话场景
@@ -414,26 +417,27 @@ public class MixVerifyActivity extends AppCompatActivity
 
                 if (ErrorCode.SUCCESS != ret_v) {
                     showTips(getString(R.string.login_vocal_failure_hint));
-                    return;
-
                 } else {
                     //声纹识别成功
                     if ((obj.optString("decision")).equals("accepted")) {
                         mLoginSuccess_v = true;
                         name_v = obj.optString("user");
                         score_v = obj.optDouble("score");
+
+                        vocalResult = name_v + score_v;
+
                         // 保存到历史记录中
                         SpeechApp.getmHisList().addHisItem(object.getString("group_id"),
                                 object.getString("group_name") + "(" + object.getString("group_id") + ")");
-                        SaveFuncUtil.saveObject(MixVerifyActivity.this, SpeechApp.getmHisList(),
+                        SaveFuncUtil.saveObject(MixVerifyActivity1.this, SpeechApp.getmHisList(),
                                 SpeechApp.HIS_FILE_NAME);
 
                     } else {
                         mLoginSuccess_v = false;
-                        setResultDialog(false, null, null, null,
-                                getString(R.string.login_vocal_result_mismatch));
-
-                        mHandler.removeMessages(MSG_FACE_START);
+                        vocalResult = getString(R.string.login_vocal_result_mismatch);
+//                        setResultDialog(false, null, null, null,
+//                                getString(R.string.login_vocal_result_mismatch));
+//                        mHandler.removeMessages(MSG_FACE_START);
                     }
                 }
 
@@ -465,13 +469,13 @@ public class MixVerifyActivity extends AppCompatActivity
             if (null != mProDialog) {
                 mProDialog.dismiss();
             }
-            setResultDialog(false, null, null, null, error.getPlainDescription(true));
-            mHandler.removeMessages(MSG_FACE_START);
+            vocalResult = error.getErrorDescription();
+//            setResultDialog(false, null, null, null, error.getPlainDescription(true));
+//            mHandler.removeMessages(MSG_FACE_START);
         }
 
     };
 
-    //显示动画
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
@@ -491,11 +495,9 @@ public class MixVerifyActivity extends AppCompatActivity
             // 在合适的位置弹出提示框
             int[] loc = new int[2];
             mBtnRecord.getLocationInWindow(loc);
-            mHintOffsetY = loc[1] - DensityUtil.dip2px(MixVerifyActivity.this, 60);
-
-
+            mHintOffsetY = loc[1] - DensityUtil.dip2px(MixVerifyActivity1.this, 100);
             mToast.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL,
-                    0, mHintOffsetY + DensityUtil.dip2px(MixVerifyActivity.this, 30));
+                    0, mHintOffsetY);
         }
 
     }
@@ -558,26 +560,23 @@ public class MixVerifyActivity extends AppCompatActivity
 
                 int ret_f = object.getInt("ret");
                 if (ErrorCode.SUCCESS != ret_f) {
-                    showTip(getString(R.string.login_face_failure_hint));
-
-                    return;
-                } else {
-
+                    showTips(getString(R.string.login_face_failure_hint));
+                }
+                else if (mLoginSuccess_v) {
                     if ((obj.optString("decision")).equals("accepted")) {
-//                        mLoginSuccess_f = true;
                         name_f = obj.optString("user");
                         score_f = obj.optDouble("score");
                         // 保存到历史记录中
                         SpeechApp.getmHisList().addHisItem(object.getString("group_id"),
                                 object.getString("group_name") + "(" + object.getString("group_id") + ")");
-                        SaveFuncUtil.saveObject(MixVerifyActivity.this, SpeechApp.getmHisList(),
+                        SaveFuncUtil.saveObject(MixVerifyActivity1.this, SpeechApp.getmHisList(),
                                 SpeechApp.HIS_FILE_NAME);
 
-//                        showTip(getString(R.string.login_face_success_hint));
+                        showTips(getString(R.string.login_face_success_hint));
 
                         if (name_f.equals(name_v)) {
                             // 创建AlertDialog成功
-                            setResultDialog(true, name_f, score_v, score_f,null);
+                            setResultDialog(true, name_f, score_v, score_f, name_f);
 //
                         } else {
                             // 创建AlertDialog失败
@@ -587,6 +586,17 @@ public class MixVerifyActivity extends AppCompatActivity
                     } else {
                         setResultDialog(false, name_f, score_v, score_f,
                                 getString(R.string.login_face_result_mismatch));
+                    }
+                }
+                else if(!mLoginSuccess_v){
+                    if ((obj.optString("decision")).equals("accepted")) {
+                        showTips(getString(R.string.login_face_success_hint));
+                            // 创建AlertDialog失败
+                            setResultDialog(false, null, null, null,
+                                    getString(R.string.login_face_success_hint) +"\n"+ vocalResult);
+                    } else {
+                        setResultDialog(false,null, null, null,
+                                getString(R.string.login_face_result_mismatch) +"\n"+ vocalResult);
                     }
                 }
             } catch (JSONException e) {
@@ -602,19 +612,26 @@ public class MixVerifyActivity extends AppCompatActivity
         @Override
         public void onError(SpeechError error) {
             mVerifyStarted = false;
-            mLoginSuccess_v = false;
 
             if (null != mProDialog) {
                 mProDialog.dismiss();
             }
-            setResultDialog(false, null, null, null, error.getPlainDescription(true));
-//            showTip(error.getPlainDescription(true));
+            if(mLoginSuccess_v){
+                setResultDialog(false,null,null,null,
+                        getString(R.string.login_vocal_success_hint)+"\n"
+                                + error.getErrorDescription());
+            }else {
+                setResultDialog(false,null,null,null,
+                        vocalResult + "\n" + error.getErrorDescription());
+            }
+
         }
 
     };
 
     /**
      * 识别结果响应
+     * 存储照片以及结果
      *
      * @param decision
      * @param name
@@ -622,11 +639,11 @@ public class MixVerifyActivity extends AppCompatActivity
      * @param score_f
      */
     private void setResultDialog(Boolean decision, String name, Double score_v, Double score_f, String str) {
-        mBuider = new AlertDialog.Builder(MixVerifyActivity.this);
+        mBuider = new AlertDialog.Builder(MixVerifyActivity1.this);
 
         //存储照片
         try {
-            saveToSDCard(mBitmap,decision,str);
+            saveToSDCard(mBitmap, decision, str);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -639,8 +656,8 @@ public class MixVerifyActivity extends AppCompatActivity
                             "\n人脸相似度：" + score_f)
                     .create();
             resultDialog.show();
-            mTtsFuncUtil.ttsFunction(MixVerifyActivity.this,
-                    getString(R.string.login_resultdialog_success)+name_f + "请进");
+            mTtsFuncUtil.ttsFunction(MixVerifyActivity1.this,
+                    getString(R.string.login_resultdialog_success) + str + "请进");
             mHandler.sendEmptyMessageDelayed(MSG_RESULT_DISMISS, 6000);
             mHandler.sendEmptyMessageDelayed(MSG_ACTIVITY_FINISH, 7000);
         } else {
@@ -654,25 +671,25 @@ public class MixVerifyActivity extends AppCompatActivity
                         .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                Intent intent = new Intent(MixVerifyActivity.this, InputPwdActivity.class);
+                                Intent intent = new Intent(MixVerifyActivity1.this, InputPwdActivity.class);
                                 startActivity(intent);
                                 finish();
                             }
                         }).create();
                 resultDialog.show();
-                mTtsFuncUtil.ttsFunction(MixVerifyActivity.this, getString(R.string.login_resultdialog_fail)
-                        +getString(R.string.login_hint_input_pwd));
+                mTtsFuncUtil.ttsFunction(MixVerifyActivity1.this, getString(R.string.login_resultdialog_fail)
+                        + getString(R.string.login_hint_input_pwd));
                 SpeechApp.failTime = 0;
             } else {
                 resultDialog = mBuider.setIcon(R.drawable.icon_failed)
                         .setTitle(getString(R.string.login_resultdialog_fail))
-                        .setMessage("失败原因：" + str)
+                        .setMessage("失败原因：\n" + str)
                         .create();
                 resultDialog.show();
-                mTtsFuncUtil.ttsFunction(MixVerifyActivity.this,
+                mTtsFuncUtil.ttsFunction(MixVerifyActivity1.this,
                         getString(R.string.login_resultdialog_fail) + str);
-                mHandler.sendEmptyMessageDelayed(MSG_RESULT_DISMISS, 6000);
-                mHandler.sendEmptyMessageDelayed(MSG_ACTIVITY_FINISH, 7000);
+                mHandler.sendEmptyMessageDelayed(MSG_RESULT_DISMISS, 8000);
+                mHandler.sendEmptyMessageDelayed(MSG_ACTIVITY_FINISH, 9000);
             }
 
         }
@@ -680,31 +697,36 @@ public class MixVerifyActivity extends AppCompatActivity
     }
 
     /**
-     * 将拍下来的照片存放在SD卡中
+     * 将照片分类存放
+     *
      * @param bitmap
+     * @param decision
+     * @param str
      * @throws IOException
      */
-    private void saveToSDCard(Bitmap bitmap ,Boolean decision,String str) throws IOException {
+    private static void saveToSDCard(Bitmap bitmap, Boolean decision, String str) throws IOException {
         Date date = new Date();
         SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss"); // 格式化时间
-        String filename = format.format(date);
+        String filename = format.format(date) + str + ".jpg";
         File fileFolder = new File(Environment.getExternalStorageDirectory() + "/NYY/"
-                +"verifyData");
+                + "verifyData");
         if (!fileFolder.exists()) { // 如果目录不存在，则创建一个名为"verifyData"的目录
             fileFolder.mkdir();
         }
-        if(decision){
+        if (decision) {
+            //识别结果成功则将照片放入succeed文件夹
             fileFolder = new File(Environment.getExternalStorageDirectory() + "/NYY/verifyData/"
-                    +"succeed");
-            filename += name_f+".jpg";
-            if (!fileFolder.exists())
-                fileFolder.mkdir();// 如果目录不存在，则创建一个名为"succeed"的目录
-        }else {
+                    + "succeed");
+            if (!fileFolder.exists()) { // 如果目录不存在，则创建一个名为"succeed"的目录
+                fileFolder.mkdir();
+            }
+        } else {
+            //识别结果失败则将照片放入failed文件夹
             fileFolder = new File(Environment.getExternalStorageDirectory() + "/NYY/verifyData/"
-                    +"failed");
-            filename += str+".jpg";
-            if (!fileFolder.exists())
-                fileFolder.mkdir();// 如果目录不存在，则创建一个名为"failed"的目录
+                    + "failed");
+            if (!fileFolder.exists()) { // 如果目录不存在，则创建一个名为"failed"的目录
+                fileFolder.mkdir();
+            }
         }
 
         File mapFile = new File(fileFolder, filename);
@@ -713,7 +735,6 @@ public class MixVerifyActivity extends AppCompatActivity
         outputStream.flush();
         outputStream.close(); // 关闭输出流
     }
-
 
     /**
      * 处理消息，拍照或开始人脸识别
@@ -771,10 +792,10 @@ public class MixVerifyActivity extends AppCompatActivity
         @Override
         public void onPictureTaken(byte[] data, Camera camera) {
             Log.d(TAG, "onPictureTaken");
-            mCameraHelper.setCacheData(data, mCameraId, MixVerifyActivity.this);
+            mCameraHelper.setCacheData(data, mCameraId, MixVerifyActivity1.this);
             mBitmap = mCameraHelper.getImageBitmap();
 
-            if (!mIsPause && mLoginSuccess_v) {
+            if (!mIsPause ) {
                 //发送消息 开始人脸识别
                 mHandler.sendEmptyMessage(MSG_FACE_START);
             }
@@ -789,8 +810,6 @@ public class MixVerifyActivity extends AppCompatActivity
 
         }
     };
-
-
 
     /**
      * 开始人脸验证
@@ -841,8 +860,8 @@ public class MixVerifyActivity extends AppCompatActivity
         try {
             // 打开摄像头
             mCamera = Camera.open(mCameraId);
-            mCamera.setDisplayOrientation(CameraHelper.getPreviewDegree(MixVerifyActivity.this, mCameraId));
-            mCamera.setParameters(mCameraHelper.getCameraParam(MixVerifyActivity.this, mCamera, mCameraId));
+            mCamera.setDisplayOrientation(CameraHelper.getPreviewDegree(MixVerifyActivity1.this, mCameraId));
+            mCamera.setParameters(mCameraHelper.getCameraParam(MixVerifyActivity1.this, mCamera, mCameraId));
             mPreviewSize = mCamera.getParameters().getPreviewSize();
 
             setSurfaceViewSize();
@@ -884,7 +903,7 @@ public class MixVerifyActivity extends AppCompatActivity
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
         try {
             // 刷新屏幕横转参数变化，得放在catch里防止出现异常事件
-            mCamera.setParameters(mCameraHelper.getCameraParam(MixVerifyActivity.this,
+            mCamera.setParameters(mCameraHelper.getCameraParam(MixVerifyActivity1.this,
                     mCamera, mCameraId));// 设置相机的参数
         } catch (Exception e) {
             e.printStackTrace();
@@ -957,22 +976,17 @@ public class MixVerifyActivity extends AppCompatActivity
             mProDialog.dismiss();
         }
         mTtsFuncUtil.ttsCancel();
-        if (null != mIdVerifier) {
-            mIdVerifier.destroy();
-            mIdVerifier = null;
-        }
         super.finish();
     }
 
     private void showTip(final String str) {
         mToast.setText(str);
         mToast.show();
-        mTtsFuncUtil.ttsFunction(MixVerifyActivity.this, str);
+        mTtsFuncUtil.ttsFunction(MixVerifyActivity1.this, str);
     }
 
     private void showTips(String str) {
         mToast.setText(str);
         mToast.show();
     }
-
 }

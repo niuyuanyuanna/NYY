@@ -61,6 +61,7 @@
         <activity android:name=".regist.FaceRegist" />
         <activity android:name=".regist.GroupManage" />
         <activity android:name=".MixVerifyActivity" />
+        <activity android:name=".MixVerifyActivity1" />
         <activity android:name=".InputPwdActivity"></activity>
     </application>
 

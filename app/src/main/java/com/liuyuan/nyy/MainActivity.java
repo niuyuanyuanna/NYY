@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 intent = new Intent(this, RegistActivity.class);
                 break;
             case R.id.btnMixVerify:
-                intent = new Intent(this,MixVerifyActivity.class);
+                intent = new Intent(this,MixVerifyActivity1.class);
                 break;
             default:
                 break;
