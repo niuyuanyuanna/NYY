@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import com.liuyuan.nyy.regist.RegistActivity;
@@ -59,7 +58,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 intent = new Intent(this, RegistActivity.class);
                 break;
             case R.id.btnMixVerify:
-                intent = new Intent(this,MixVerifyActivity1.class);
+                intent = new Intent(this,MixVerifyActivity.class);
                 break;
             default:
                 break;

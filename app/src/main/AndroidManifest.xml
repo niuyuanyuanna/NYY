@@ -56,13 +56,17 @@
 
 
         <activity android:name=".regist.RegistActivity"
-            android:windowSoftInputMode="adjustUnspecified|stateHidden"/>
-        <activity android:name=".regist.VocalRegist" />
-        <activity android:name=".regist.FaceRegist" />
-        <activity android:name=".regist.GroupManage" />
+            android:windowSoftInputMode="adjustUnspecified|stateHidden"
+            android:screenOrientation="sensor"/>
+        <activity android:name=".regist.VocalRegist"
+            android:screenOrientation="sensor"/>
+        <activity android:name=".regist.FaceRegist"
+            android:screenOrientation="sensor"/>
+        <activity android:name=".regist.GroupManage"
+            android:screenOrientation="sensor"/>
         <activity android:name=".MixVerifyActivity" />
-        <activity android:name=".MixVerifyActivity1" />
-        <activity android:name=".InputPwdActivity"></activity>
+        <activity android:name=".InputPwdActivity"
+            android:screenOrientation="sensor"/>
     </application>
 
 </manifest>
