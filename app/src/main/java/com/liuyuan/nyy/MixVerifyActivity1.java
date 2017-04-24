@@ -70,7 +70,7 @@ public class MixVerifyActivity1 extends AppCompatActivity
     private Bitmap mBitmap;
 
     private Camera mCamera;
-    private int mCameraId = Camera.CameraInfo.CAMERA_FACING_FRONT;
+//    private int mCameraId = Camera.CameraInfo.CAMERA_FACING_FRONT;
     private Camera.Size mPreviewSize;
     private boolean mIsPreviewing = false;
     private boolean mCanTakePic = true;
@@ -217,11 +217,11 @@ public class MixVerifyActivity1 extends AppCompatActivity
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         }
 
-        if (mInterruptedByOtherApp) {
-            mInterruptedByOtherApp = false;
-            finish();
-
-        }
+//        if (mInterruptedByOtherApp) {
+//            mInterruptedByOtherApp = false;
+//            finish();
+//
+//        }
         //打开Activity后延迟6S打开麦克风
         mHandler.sendEmptyMessageDelayed(MSG_PCM_START, 6000);
         //打开Activity后延迟13S关闭麦克风
@@ -255,8 +255,7 @@ public class MixVerifyActivity1 extends AppCompatActivity
                 break;
             case R.id.btn_flash_switch:
                 // 检查当前硬件设施是否支持闪光灯
-                if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH)
-                        || mCameraId == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+                if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH)) {
                     showTips(getString(R.string.hint_flash_not_support));
                     return;
                 }
@@ -856,7 +855,6 @@ public class MixVerifyActivity1 extends AppCompatActivity
             return;
         }else{
             showTips("相机未连接");
-            finish();
         }
         try {
             // 打开摄像头
