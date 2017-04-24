@@ -4,7 +4,6 @@
     android:id="@+id/activity_mix_verify"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="@color/black"
     tools:context="com.liuyuan.nyy.MixVerifyActivity">
     <!-- 相机预览 -->
 
@@ -23,7 +22,8 @@
             android:id="@+id/surface_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/colorPrimary">
+            android:background="@color/colorPrimary"
+            android:layout_alignParentTop="true">
 
         </RelativeLayout>
 
@@ -74,15 +74,6 @@
                     android:layout_alignParentEnd="true"
                     android:layout_marginEnd="@dimen/title_button_margin" />
 
-                <TextView
-                    android:id="@+id/tv_group_name"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/txt_num"
-                    android:gravity="center"
-                    android:textColor="@color/white"
-                    android:textSize="@dimen/title_group_name_size" />
-
 
             </RelativeLayout>
 
@@ -92,6 +83,7 @@
                 android:layout_weight="1.5" />
 
             <ImageView
+                android:id="@+id/imageView"
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
                 android:layout_weight="3"
@@ -126,7 +118,16 @@
                         android:src="@drawable/ic_mic_round" />
                 </FrameLayout>
 
-
+                <TextView
+                    android:id="@+id/tv_group_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="start|center_vertical"
+                    android:text="laborotry"
+                    android:layout_marginStart="@dimen/title_button_margin"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/title_group_name_size"
+                    android:layout_centerVertical="true"/>
                 <ImageButton
                     android:id="@+id/btn_input_password"
                     android:layout_width="@dimen/title_button_size"

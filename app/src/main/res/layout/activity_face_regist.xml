@@ -85,7 +85,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:gravity="center">
+                android:gravity="center"
+                android:id="@+id/btn_choose_pic">
 
                 <ImageButton
                     android:id="@+id/btn_pick"
@@ -97,17 +98,19 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_toEndOf="@id/btn_pick"
                     android:text="选图"
                     android:textColor="@color/white"
-                    android:textSize="@dimen/regist_username_txtsize" />
+                    android:textSize="@dimen/regist_username_txtsize"
+                    android:layout_alignParentTop="true"
+                    android:layout_toEndOf="@+id/btn_pick" />
             </RelativeLayout>
 
             <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:gravity="center">
+                android:gravity="center"
+                android:id="@+id/btn_take_pic">
 
                 <ImageButton
                     android:id="@+id/btn_camera"

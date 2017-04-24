@@ -24,8 +24,6 @@ import java.util.List;
 
 /**
  * 摄像头工具类，用于保存图片，设置摄像头参数
- * 
- * @author iFlytek &nbsp;&nbsp;&nbsp;<a href="http://www.xfyun.cn/">讯飞语音云</a>
  */
 public class CameraHelper {
 	private final static String TAG = CameraHelper.class.getSimpleName();

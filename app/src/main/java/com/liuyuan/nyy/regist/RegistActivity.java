@@ -133,7 +133,7 @@ public class RegistActivity extends AppCompatActivity
                 mSharedHelper.saveUname(uname);
 
                 //跳转至人脸注册界面
-                intent = new Intent(RegistActivity.this, FaceRegist.class);
+                intent = new Intent(RegistActivity.this, FaceRegist1.class);
                 intent.putExtra("scenes", "ifr");
                 startActivity(intent);
                 break;
