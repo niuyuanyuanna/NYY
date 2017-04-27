@@ -53,24 +53,30 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-
-        <activity android:name=".regist.RegistActivity"
-            android:windowSoftInputMode="adjustUnspecified|stateHidden"
-            android:screenOrientation="sensor"/>
-        <activity android:name=".regist.VocalRegist"
-            android:screenOrientation="sensor"/>
-        <activity android:name=".regist.FaceRegist"
-        android:screenOrientation="sensor"/>
-        <activity android:name=".regist.FaceRegist1"
-            android:screenOrientation="sensor"/>
-        <activity android:name=".regist.GroupManage"
-            android:screenOrientation="sensor"/>
+        <activity
+            android:name=".regist.RegistActivity"
+            android:screenOrientation="sensor"
+            android:windowSoftInputMode="adjustUnspecified|stateHidden" />
+        <activity
+            android:name=".regist.VocalRegist"
+            android:screenOrientation="sensor" />
+        <activity
+            android:name=".regist.FaceRegist"
+            android:screenOrientation="sensor" />
+        <activity
+            android:name=".regist.FaceRegist1"
+            android:screenOrientation="sensor" />
+        <activity
+            android:name=".regist.GroupManage"
+            android:screenOrientation="sensor" />
         <activity android:name=".MixVerifyActivity" />
-        <activity android:name=".MixVerifyActivity1"
-            android:screenOrientation="landscape"/>
-        <activity android:name=".InputPwdActivity"
-            android:screenOrientation="sensor"/>
+        <activity
+            android:name=".MixVerifyActivity1"
+            android:screenOrientation="landscape" />
+        <activity
+            android:name=".InputPwdActivity"
+            android:screenOrientation="sensor" />
+        <activity android:name=".PCMDemo"></activity>
     </application>
 
 </manifest>

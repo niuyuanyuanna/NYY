@@ -6,6 +6,9 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.graphics.PixelFormat;
 import android.graphics.Rect;
 import android.hardware.Camera;
 import android.os.Bundle;
@@ -28,6 +31,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.friendlyarm.AndroidSDK.HardwareControler;
 import com.iflytek.cloud.ErrorCode;
 import com.iflytek.cloud.IdentityListener;
 import com.iflytek.cloud.IdentityResult;
@@ -39,8 +43,6 @@ import com.iflytek.cloud.SpeechEvent;
 import com.iflytek.cloud.record.PcmRecorder;
 import com.iflytek.cloud.util.VerifierUtil;
 import com.liuyuan.nyy.ui.RecordView;
-//import com.liuyuan.nyy.util.CameraHelper;
-import com.liuyuan.nyy.util.CameraHelper1;
 import com.liuyuan.nyy.util.DensityUtil;
 import com.liuyuan.nyy.util.SaveFuncUtil;
 import com.liuyuan.nyy.util.TtsFuncUtil;
@@ -49,6 +51,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -71,11 +74,14 @@ public class MixVerifyActivity1 extends AppCompatActivity
 
     private Camera mCamera;
 //    private int mCameraId = Camera.CameraInfo.CAMERA_FACING_FRONT;
-    private Camera.Size mPreviewSize;
+//    private Camera.Size mPreviewSize;
     private boolean mIsPreviewing = false;
     private boolean mCanTakePic = true;
     private boolean mIsPause = false;
-    private CameraHelper1 mCameraHelper;
+    private Camera.AutoFocusCallback mAutoFocusCallback = null;
+    // 图片压缩质量
+    private static int JPEGQuality = 80;
+//    private CameraHelper2 mCameraHelper;
 
     //相机预览SuifaceView
     private SurfaceView mPreviewSurface;
@@ -116,8 +122,7 @@ public class MixVerifyActivity1 extends AppCompatActivity
     private boolean mWriteAudio = false;
 
     private final int DELAY_TIME = 1000;
-    // 在松开麦克风之前是否已经出现错误
-//    private boolean mErrorOccurBeforeUp = false;
+
 
     private static final int MSG_FACE_START = 1;
     private static final int MSG_TAKE_PICTURE = 2;
@@ -137,8 +142,6 @@ public class MixVerifyActivity1 extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mix_verify);
-
-        mCameraHelper = CameraHelper1.createHelper(MixVerifyActivity1.this);
 
         initUi();
 
@@ -161,7 +164,12 @@ public class MixVerifyActivity1 extends AppCompatActivity
         mPreviewSurface.getHolder().setKeepScreenOn(true);
         //surfaceView增加回调句柄
         mPreviewSurface.getHolder().addCallback(this);
+        mAutoFocusCallback = new Camera.AutoFocusCallback() {
+            @Override
+            public void onAutoFocus(boolean success, Camera camera) {
 
+            }
+        };
 
         tvGroupId = (TextView) findViewById(R.id.tv_group_name);
         mPwdTextView = (TextView) findViewById(R.id.txt_num);
@@ -179,13 +187,13 @@ public class MixVerifyActivity1 extends AppCompatActivity
         mProDialog.setCancelable(true);
         mProDialog.setCanceledOnTouchOutside(false);
         mProDialog.setTitle(getString(R.string.login_predialog_title));
-        mProDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-            @Override
-            public void onCancel(DialogInterface dialogInterface) {
-                mIdVerifier.cancel();
-                mVerifyStarted = false;
-            }
-        });
+//        mProDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+//            @Override
+//            public void onCancel(DialogInterface dialogInterface) {
+//                mIdVerifier.cancel();
+//                mVerifyStarted = false;
+//            }
+//        });
 
         mChangeCameraButton.setOnClickListener(this);
         mFlashSwitchButton.setOnClickListener(this);
@@ -193,6 +201,12 @@ public class MixVerifyActivity1 extends AppCompatActivity
         mToast = Toast.makeText(MixVerifyActivity1.this, "", Toast.LENGTH_SHORT);
 
         mVolView = new RecordView(MixVerifyActivity1.this);
+
+        // turn off all led
+        HardwareControler.setLedState(0,0);
+        HardwareControler.setLedState(1,0);
+        HardwareControler.setLedState(2,0);
+        HardwareControler.setLedState(3,0);
     }
 
     @Override
@@ -217,11 +231,6 @@ public class MixVerifyActivity1 extends AppCompatActivity
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         }
 
-//        if (mInterruptedByOtherApp) {
-//            mInterruptedByOtherApp = false;
-//            finish();
-//
-//        }
         //打开Activity后延迟6S打开麦克风
         mHandler.sendEmptyMessageDelayed(MSG_PCM_START, 6000);
         //打开Activity后延迟13S关闭麦克风
@@ -237,21 +246,6 @@ public class MixVerifyActivity1 extends AppCompatActivity
                     showTips(getString(R.string.hint_change_not_support));
                     return;
                 }
-//                // 先关闭摄相头
-//                closeCamera();
-//
-//                if (Camera.CameraInfo.CAMERA_FACING_BACK == mCameraId) {
-//                    if (CameraHelper1.hasCamera(Camera.CameraInfo.CAMERA_FACING_FRONT))
-//                        mCameraId = Camera.CameraInfo.CAMERA_FACING_FRONT;
-//                } else if (Camera.CameraInfo.CAMERA_FACING_FRONT == mCameraId) {
-//                    if (CameraHelper1.hasCamera(Camera.CameraInfo.CAMERA_FACING_BACK))
-//                        mCameraId = Camera.CameraInfo.CAMERA_FACING_BACK;
-//                } else {
-//                    showTips(getString(R.string.hint_change_not_support));
-//                    return;
-//                }
-//
-//                openCamera();
                 break;
             case R.id.btn_flash_switch:
                 // 检查当前硬件设施是否支持闪光灯
@@ -663,6 +657,7 @@ public class MixVerifyActivity1 extends AppCompatActivity
             resultDialog.show();
             mTtsFuncUtil.ttsFunction(MixVerifyActivity1.this,
                     getString(R.string.login_resultdialog_success) + str + "请进");
+            HardwareControler.setLedState(0,1);
             mHandler.sendEmptyMessageDelayed(MSG_RESULT_DISMISS, 6000);
             mHandler.sendEmptyMessageDelayed(MSG_ACTIVITY_FINISH, 7000);
         } else {
@@ -763,6 +758,7 @@ public class MixVerifyActivity1 extends AppCompatActivity
                     break;
                 case MSG_RESULT_DISMISS:
                     resultDialog.dismiss();
+                    HardwareControler.setLedState(0,0);
                     break;
                 case MSG_ACTIVITY_FINISH:
                     finish();
@@ -797,8 +793,18 @@ public class MixVerifyActivity1 extends AppCompatActivity
         @Override
         public void onPictureTaken(byte[] data, Camera camera) {
             Log.d(TAG, "onPictureTaken");
-            mCameraHelper.setCacheData(data, MixVerifyActivity1.this);
-            mBitmap = mCameraHelper.getImageBitmap();
+
+            Bitmap bitmap = null;
+            if(null != data) {
+                bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
+                mCamera.stopPreview();
+                mIsPreviewing = false;
+            }
+            Matrix matrix = new Matrix();
+
+            matrix.postRotate((float) 0.0);
+            mBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, false);
+
 
             if (!mIsPause ) {
                 //发送消息 开始人脸识别
@@ -822,7 +828,7 @@ public class MixVerifyActivity1 extends AppCompatActivity
     private void startFaceVerify() {
         Log.d(TAG, "startFaceVerify");
 
-        byte[] imageData = mCameraHelper.getImageData();
+        byte[] imageData = getImageData();
 
         // 清空参数
         mIdVerifier.setParameter(SpeechConstant.PARAMS, null);
@@ -844,47 +850,65 @@ public class MixVerifyActivity1 extends AppCompatActivity
         mIdVerifier.stopWrite("ifr");
     }
 
+    private byte[] getImageData() {
+        ByteArrayOutputStream baos = null;
+        try {
+            Matrix matrix = new Matrix();
+            // 获取原始图片的宽和高度
+            int orgWidth = mBitmap.getWidth();
+            int orgHeight = mBitmap.getHeight();
+            float scaleWidth = ((float) orgWidth) / 600;
+            float scaleHeigth = ((float) orgHeight) / 800;
+            float scale = Math.max(scaleWidth, scaleHeigth);
+            matrix.postScale(1 / scale, 1 / scale);
+
+            // 得到放缩后的图片
+            Bitmap scaledBitmap = Bitmap.createBitmap(mBitmap, 0, 0, orgWidth, orgHeight, matrix, true);
+            Log.d(TAG, "Image orgwidth:" + orgWidth + ",scaleWidth:" + scaleWidth
+                    + ",orgHeight:" + orgHeight + ",scaleHeigth:" + scaleHeigth
+                    + ",newWidth:" + scaledBitmap.getWidth() + ",newHeight:"
+                    + scaledBitmap.getHeight());
+
+            // 将调整后的图片转换成字节流
+            baos = new ByteArrayOutputStream();
+            byte[] bytes = null;
+
+            scaledBitmap.compress(Bitmap.CompressFormat.JPEG, JPEGQuality, baos);
+            bytes = baos.toByteArray();
+
+            recycleBitmap(scaledBitmap);
+            scaledBitmap = null;
+            return bytes;
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (baos != null) {
+                    baos.close();
+                }
+                baos = null;
+            } catch (Exception e2) {
+                e2.printStackTrace();
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 释放bitmap资源
+     *
+     * @param bitmap
+     */
+    private void recycleBitmap(Bitmap bitmap) {
+        if (bitmap != null && !bitmap.isRecycled()) {
+            bitmap.recycle();
+//			bitmap = null;
+        }
+    }
 
     private void showProDialog() {
         mProDialog.setMessage("验证中...");
         mProDialog.show();
-    }
-
-    private void openCamera() {
-        if (null != mCamera) {
-            return;
-        }else{
-            showTips("相机未连接");
-        }
-        try {
-            // 打开摄像头
-            mCamera = Camera.open();
-            Camera.Parameters mParam = mCamera.getParameters();
-//            mParam.setPictureFormat(PixelFormat.JPEG);//设置拍照后存储的图片格式
-
-            //设置分辨率，支持如下分辨率 "1280x720,1184x656,960x720,960x544,864x480,800x448,544x288,352x288,320x176"
-            //预览和拍照的分辨率必须是相同的
-            mParam.setPictureSize(1280, 720);
-            mParam.setPreviewSize(1280, 720);
-            mCamera.setDisplayOrientation(0);
-            mParam.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
-            mCamera.setParameters(mParam);
-//            mCamera.autoFocus(myAutoFocusCallback);
-
-            mPreviewSize = mCamera.getParameters().getPreviewSize();
-
-            setSurfaceViewSize();
-
-            // 设置用于显示拍照影像的SurfaceHolder对象
-            mCamera.setPreviewDisplay(mPreviewSurface.getHolder());
-            mCamera.startPreview(); // 开始预览
-            mIsPreviewing = true;
-
-            Log.d(TAG, "camera create");
-        } catch (Exception e) {
-            closeCamera();
-            e.printStackTrace();
-        }
     }
 
     private void closeCamera() {
@@ -896,27 +920,39 @@ public class MixVerifyActivity1 extends AppCompatActivity
         }
     }
 
-    private void setSurfaceViewSize() {
-//        Point fitSurfaceSize = mCameraHelper.getFitSurfaceSize(mPreviewSize);
-        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(getWindowManager().getDefaultDisplay().getWidth()
-                , getWindowManager().getDefaultDisplay().getHeight());
-        params.addRule(RelativeLayout.CENTER_IN_PARENT);
-        mPreviewSurface.setLayoutParams(params);
-    }
-
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
-        openCamera();
+        mCamera = Camera.open();
+        try {
+            mCamera.setPreviewDisplay(mPreviewSurface.getHolder());
+        } catch (IOException e) {
+            if(null != mCamera){
+                mCamera.release();
+                mCamera = null;
+            }
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-        try {
-            // 刷新屏幕横转参数变化，得放在catch里防止出现异常事件
-            mCamera.setParameters(mCameraHelper.getCameraParam(MixVerifyActivity1.this,
-                    mCamera));// 设置相机的参数
-        } catch (Exception e) {
-            e.printStackTrace();
+        if(mIsPreviewing){
+            mCamera.stopPreview();
+        }
+        if(null != mCamera){
+            Camera.Parameters mParam = mCamera.getParameters();
+            mParam.setPictureFormat(PixelFormat.JPEG);//设置拍照后存储的图片格式
+
+            //设置分辨率，支持如下分辨率 "1280x720,1184x656,960x720,960x544,864x480,800x448,544x288,352x288,320x176"
+            //预览和拍照的分辨率必须是相同的
+            mParam.setPictureSize(1280, 720);
+            mParam.setPreviewSize(1280, 720);
+            mCamera.setDisplayOrientation(0);
+            mParam.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
+            mCamera.setParameters(mParam);
+            mCamera.startPreview();
+            mCamera.autoFocus(mAutoFocusCallback);
+            mIsPreviewing = true;
         }
     }
 

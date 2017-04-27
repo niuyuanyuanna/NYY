@@ -3,12 +3,16 @@ package com.liuyuan.nyy;
 
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.friendlyarm.AndroidSDK.HardwareControler;
+import com.liuyuan.nyy.util.PWMUtil;
 import com.liuyuan.nyy.util.TtsFuncUtil;
 import com.nightonke.blurlockview.BlurLockView;
 import com.nightonke.blurlockview.Directions.HideType;
@@ -21,6 +25,12 @@ public class InputPwdActivity extends AppCompatActivity implements BlurLockView.
     private BlurLockView mBlurLockView;
     private ImageView backgroung;
     private Toast mToast;
+
+    private PWMUtil mPWMUtil;
+
+    private static final int STOP_PWM = 1;
+    private static final int STOP_LED = 2;
+
 
     //记录输入密码错误次数
     private int wrongTime = 0;
@@ -44,36 +54,60 @@ public class InputPwdActivity extends AppCompatActivity implements BlurLockView.
         mBlurLockView.setOverlayColor(getResources().getColor(R.color.blur_view_layout_color));
         mBlurLockView.setTitle(getString(R.string.set_blur_radius_title));
         mBlurLockView.setRightButton(getString(R.string.set_right_button));
-        mBlurLockView.setType(Password.NUMBER,false);
+        mBlurLockView.setType(Password.NUMBER, false);
         mBlurLockView.setTypeface(Typeface.DEFAULT);
         mBlurLockView.setBlurRadius(10);
 
-        mBlurLockView.show(500,getShowType(4),getEaseType(30));
+        mBlurLockView.show(500, getShowType(4), getEaseType(30));
         mBlurLockView.setOnPasswordInputListener(this);
 
+        mPWMUtil = new PWMUtil();
+
         mToast = Toast.makeText(InputPwdActivity.this, "", Toast.LENGTH_SHORT);
+        // turn off all led
+        HardwareControler.setLedState(0,0);
+        HardwareControler.setLedState(1,0);
+        HardwareControler.setLedState(2,0);
+        HardwareControler.setLedState(3,0);
 
     }
 
+    private Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case STOP_PWM:
+                    mPWMUtil.stopPWM();
+                    break;
+                case STOP_LED:
+                    HardwareControler.setLedState(0,0);
+                    finish();
+                default:
+                    break;
+            }
+        }
+    };
 
     @Override
     public void correct(String inputPassword) {
         showTip(getString(R.string.password_correct));
-        mBlurLockView.hide(500,getHideType(4),getEaseType(30));
-        finish();
-
+        HardwareControler.setLedState(0,1);
+        mBlurLockView.hide(500, getHideType(4), getEaseType(30));
+        mHandler.sendEmptyMessageDelayed(STOP_LED,2000);
     }
-
 
     @Override
     public void incorrect(String inputPassword) {
         wrongTime++;
-        if(wrongTime>=3){
+        if (wrongTime >= 3) {
             showTip(getString(R.string.wrong_time_exceed_three));
-            //打开及时器设置30s后重新打开BlurLockView
-finish();
+            //蜂鸣器报警
+            mPWMUtil.palyPWM();
+            //设置蜂鸣器5s后关闭
+            mHandler.sendEmptyMessageDelayed(STOP_PWM, 5000);
+
             wrongTime = 0;
-        }else {
+        } else {
             showTip(getString(R.string.password_incorrect));
         }
     }
