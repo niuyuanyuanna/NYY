@@ -6,8 +6,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -23,15 +21,15 @@ import com.nightonke.blurlockview.Eases.EaseType;
 import com.nightonke.blurlockview.Password;
 
 
-public class InputPwdActivity extends AppCompatActivity implements BlurLockView.OnPasswordInputListener {
+public class InputPwdActivity1 extends AppCompatActivity implements BlurLockView.OnPasswordInputListener {
     private BlurLockView mBlurLockView;
     private ImageView backgroung;
     private Toast mToast;
 
-//    private PWMUtil mPWMUtil;
+    private PWMUtil mPWMUtil;
 
-//    private static final int STOP_PWM = 1;
-//    private static final int STOP_LED = 2;
+    private static final int STOP_PWM = 1;
+    private static final int STOP_LED = 2;
 
 
     //记录输入密码错误次数
@@ -42,7 +40,7 @@ public class InputPwdActivity extends AppCompatActivity implements BlurLockView.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_input_pwd);
+        setContentView(R.layout.activity_input_pwd1);
 
         initUi();
 
@@ -63,39 +61,39 @@ public class InputPwdActivity extends AppCompatActivity implements BlurLockView.
         mBlurLockView.show(500, getShowType(4), getEaseType(30));
         mBlurLockView.setOnPasswordInputListener(this);
 
-//        mPWMUtil = new PWMUtil();
+        mPWMUtil = new PWMUtil();
 
-        mToast = Toast.makeText(InputPwdActivity.this, "", Toast.LENGTH_SHORT);
+        mToast = Toast.makeText(InputPwdActivity1.this, "", Toast.LENGTH_SHORT);
         // turn off all led
-//        HardwareControler.setLedState(0,0);
-//        HardwareControler.setLedState(1,0);
-//        HardwareControler.setLedState(2,0);
-//        HardwareControler.setLedState(3,0);
+        HardwareControler.setLedState(0,0);
+        HardwareControler.setLedState(1,0);
+        HardwareControler.setLedState(2,0);
+        HardwareControler.setLedState(3,0);
 
     }
 
-//    private Handler mHandler = new Handler() {
-//        @Override
-//        public void handleMessage(Message msg) {
-//            switch (msg.what) {
-//                case STOP_PWM:
-//                    mPWMUtil.stopPWM();
-//                    break;
-//                case STOP_LED:
-//                    HardwareControler.setLedState(0,0);
-//                    finish();
-//                default:
-//                    break;
-//            }
-//        }
-//    };
+    private Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case STOP_PWM:
+                    mPWMUtil.stopPWM();
+                    break;
+                case STOP_LED:
+                    HardwareControler.setLedState(0,0);
+                    finish();
+                default:
+                    break;
+            }
+        }
+    };
 
     @Override
     public void correct(String inputPassword) {
         showTip(getString(R.string.password_correct));
-//        HardwareControler.setLedState(0,1);
+        HardwareControler.setLedState(0,1);
         mBlurLockView.hide(500, getHideType(4), getEaseType(30));
-//        mHandler.sendEmptyMessageDelayed(STOP_LED,2000);
+        mHandler.sendEmptyMessageDelayed(STOP_LED,2000);
     }
 
     @Override
@@ -104,9 +102,9 @@ public class InputPwdActivity extends AppCompatActivity implements BlurLockView.
         if (wrongTime >= 3) {
             showTip(getString(R.string.wrong_time_exceed_three));
             //蜂鸣器报警
-//            mPWMUtil.palyPWM();
+            mPWMUtil.palyPWM();
             //设置蜂鸣器5s后关闭
-//            mHandler.sendEmptyMessageDelayed(STOP_PWM, 5000);
+            mHandler.sendEmptyMessageDelayed(STOP_PWM, 5000);
 
             wrongTime = 0;
         } else {
@@ -263,17 +261,10 @@ public class InputPwdActivity extends AppCompatActivity implements BlurLockView.
         return easeType;
     }
 
-    private void showTip(final String str) {
+    private void showTip(final String str ) {
         mToast.setText(str);
         mToast.show();
-        mTtsFuncUtil.ttsFunction(this, str, mListener);
+        mTtsFuncUtil.ttsFunction(this, str,null);
     }
-    private TtsListener mListener = new TtsListener() {
-        @Override
-        public void onCompleted(SpeechError error) {
-            super.onCompleted(error);
-            finish();
-        }
-    };
 
 }

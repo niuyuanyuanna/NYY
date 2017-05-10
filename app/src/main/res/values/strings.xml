@@ -98,6 +98,7 @@
     <string name="login_face_failure_hint">人脸验证失败</string>
     <string name="login_face_success_hint">人脸验证成功</string>
     <string name="login_hint_verifying">正在验证中，请稍候再试</string>
+    <string name="login_hint_engine_success">引擎初始化成功</string>
     <string name="login_hint_engine_error">引擎初始化失败，错误码：</string>
     <string name="login_hint_read_different">声纹验证失败：您所读的数字不一致</string>
     <string name="login_hint_interrupted">检测到操作被打断，请重试</string>
@@ -118,8 +119,8 @@
     <string name="set_blur_radius_title">请输入密码</string>
     <string name="set_left_button">返回</string>
     <string name="set_right_button">清除</string>
-    <string name="password_correct">密码正确</string>
-    <string name="password_incorrect">密码错误</string>
+    <string name="password_correct">密码正确,请进</string>
+    <string name="password_incorrect">密码错误，请重试</string>
     <string name="click_to_show">点击打开界面</string>
     <string name="wrong_time_exceed_three">错误超过三次</string>
 

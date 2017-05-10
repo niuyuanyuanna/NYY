@@ -20,14 +20,30 @@ import com.iflytek.sunflower.FlowerCollector;
 public class TtsFuncUtil {
     private static String TAG = TtsFuncUtil.class.getSimpleName();
     private SpeechSynthesizer mTts;
+    private static volatile TtsFuncUtil sInstance;
 
-    public void ttsFunction(Context context, String text) {
+    private TtsFuncUtil() {}
+
+    public static TtsFuncUtil getInstance() {
+        if (sInstance == null) {
+            synchronized (TtsFuncUtil.class) {
+                if (sInstance == null) {
+                    sInstance = new TtsFuncUtil();
+                }
+            }
+        }
+        return sInstance;
+    }
+
+
+
+    public void ttsFunction(Context context, String text ,TtsListener listener) {
         // 初始化合成对象
         mTts = SpeechSynthesizer.createSynthesizer(context, mTtsInitListener);
 
         FlowerCollector.onEvent(context, "tts_play");
         setParam();
-        int code = mTts.startSpeaking(text, mTtsListener);
+        int code = mTts.startSpeaking(text, listener);
         if (code != ErrorCode.SUCCESS)
             Log.d(TAG, "语音合成失败，错误码：" + code);
     }
@@ -76,53 +92,13 @@ public class TtsFuncUtil {
             }
         }
     };
-    /**
-     * 合成回调监听。
-     */
-    private SynthesizerListener mTtsListener = new SynthesizerListener() {
 
-        @Override
-        public void onSpeakBegin() {
-        }
-
-        @Override
-        public void onSpeakPaused() {
-        }
-
-        @Override
-        public void onSpeakResumed() {
-        }
-
-        @Override
-        public void onBufferProgress(int percent, int beginPos, int endPos,
-                                     String info) {
-        }
-
-        @Override
-        public void onSpeakProgress(int percent, int beginPos, int endPos) {
-        }
-
-        @Override
-        public void onCompleted(SpeechError error) {
-            if (error != null) {
-                Log.d(TAG, error.getPlainDescription(true));
-            }
-        }
-
-        @Override
-        public void onEvent(int eventType, int arg1, int arg2, Bundle obj) {
-            // 以下代码用于获取与云端的会话id，当业务出错时将会话id提供给技术支持人员，可用于查询会话日志，定位出错原因
-            // 若使用本地能力，会话id为null
-            //	if (SpeechEvent.EVENT_SESSION_ID == eventType) {
-            //		String sid = obj.getString(SpeechEvent.KEY_EVENT_SESSION_ID);
-            //		Log.d(TAG, "session id =" + sid);
-            //	}
-        }
-    };
 
     //停止播放
     public void ttsCancel() {
         mTts.stopSpeaking();
+    }
+    public void ttsDestroy(){
         mTts.destroy();
     }
 }

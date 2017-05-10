@@ -76,7 +76,9 @@
         <activity
             android:name=".InputPwdActivity"
             android:screenOrientation="sensor" />
-        <activity android:name=".PCMDemo"></activity>
+        <activity
+            android:name=".InputPwdActivity1"
+            android:screenOrientation="sensor" />
     </application>
 
 </manifest>
